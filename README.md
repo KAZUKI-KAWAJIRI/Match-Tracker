@@ -1,27 +1,48 @@
-# Match Tracker
+# マッチトラッカー（Match Tracker）
 
-試合の記録や統計を管理するためのアプリケーションです。
+![バージョン](https://img.shields.io/badge/version-1.0.0-blue)
+![ライセンス](https://img.shields.io/badge/license-MIT-green)
 
-## 技術スタック
+マッチトラッカーは、カードゲームやeスポーツにおける試合記録と統計分析を簡単に行えるウェブアプリケーションです。コイントス結果、先攻/後攻、勝敗などを記録し、勝率や各種傾向を可視化します。
 
-- [Next.js](https://nextjs.org/) - Reactフレームワーク
-- [TypeScript](https://www.typescriptlang.org/) - 型安全な JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) - ユーティリティファーストのCSSフレームワーク
-- [Supabase](https://supabase.io/) - オープンソースのFirebase代替
-- [Prisma](https://www.prisma.io/) - 次世代のORMツール
-- [shadcn/ui](https://ui.shadcn.com/) - 再利用可能なUIコンポーネント
-- [Biome](https://biomejs.dev/) - 高速なLinterとFormatter
+## 📋 主な機能
 
-## セットアップ方法
+- **デュエル記録**: コイントス、先攻/後攻、勝敗、使用デッキなどを記録
+- **統計分析**: 勝率や先攻/後攻の成績など、さまざまな統計情報を自動計算
+- **カスタマイズ**: デッキ名やプレイヤー情報のカスタマイズ
+- **オフライン対応**: ローカルストレージを使用し、オフラインでも使用可能
+- **レスポンシブデザイン**: モバイルからデスクトップまで、あらゆるデバイスに対応
+
+## 🖥️ スクリーンショット
+
+*（スクリーンショットがあれば、ここに画像を追加）*
+
+## 🛠️ 技術スタック
+
+- **フレームワーク**: [Next.js](https://nextjs.org/) - ReactベースのWebフレームワーク
+- **言語**: [TypeScript](https://www.typescriptlang.org/) - 型安全なJavaScript
+- **スタイリング**: [Tailwind CSS](https://tailwindcss.com/) - ユーティリティファーストのCSSフレームワーク
+- **コンポーネント**: [shadcn/ui](https://ui.shadcn.com/) - 再利用可能なUIコンポーネント
+- **開発ツール**: [Biome](https://biomejs.dev/) - 高速なLinterとFormatter
+
+将来的な追加予定:
+- **バックエンド**: [Supabase](https://supabase.io/) - バックエンドとデータベース
+- **ORM**: [Prisma](https://www.prisma.io/) - 次世代のORMツール
+
+## 📦 インストールと実行
 
 ### 前提条件
 
 - Node.js 18.x 以上
 - npm 9.x 以上
 
-### インストール
+### 開発環境のセットアップ
 
 ```bash
+# リポジトリのクローン
+git clone https://github.com/KAZUKI-KAWAJIRI/Match-Tracker.git
+cd Match-Tracker
+
 # 依存関係のインストール
 npm install
 
@@ -29,7 +50,9 @@ npm install
 npm run dev
 ```
 
-### 環境変数
+ブラウザで http://localhost:3000 を開いてアプリケーションにアクセスできます。
+
+### 環境変数 (将来的なバックエンド接続用)
 
 `.env` ファイルを作成し、以下の環境変数を設定してください：
 
@@ -39,22 +62,53 @@ NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
-## 開発
+## 🚀 デプロイ
+
+Next.jsアプリケーションは、Vercel、Netlify、GitHub Pagesなど様々なプラットフォームにデプロイできます。
 
 ```bash
-# 開発サーバーの起動
-npm run dev
-
-# ビルド
+# 本番用ビルドの作成
 npm run build
 
-# 本番環境でのサーバー起動
+# ビルドしたアプリの起動
 npm start
-
-# リント
-npm run lint
 ```
 
-## ライセンス
+## 📊 使用方法
 
-[MIT](https://choosealicense.com/licenses/mit/) 
+1. ホーム画面でデュエル情報（コイン結果、先攻/後攻、勝敗など）を入力
+2. 「記録する」ボタンをクリックして保存
+3. 下部の統計セクションで自動計算された勝率や各種統計を確認
+4. 日付ごとのフィルタリングで過去の記録を閲覧
+
+## 🔮 将来の計画
+
+- **ユーザー認証**: マルチユーザー対応とプロフィール管理
+- **クラウド同期**: 複数デバイス間でのデータ同期
+- **詳細統計**: 高度なフィルタリングとグラフ表示
+- **API対応**: 外部サービスとの連携
+- **ソーシャル機能**: フレンドとの対戦記録の共有
+
+## 👥 コントリビューション
+
+コントリビューションは大歓迎です！以下の手順に従ってください：
+
+1. このリポジトリをフォーク
+2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
+
+## ⚖️ ライセンス
+
+[MIT](https://choosealicense.com/licenses/mit/) ライセンスの下で配布されています。
+
+## 📬 お問い合わせ
+
+質問や提案がある場合は、Issuesを作成するか、以下のコンタクト先にご連絡ください：
+
+*（連絡先があれば、ここに記載）*
+
+---
+
+Made with ❤️ by KAZUKI KAWAJIRI 

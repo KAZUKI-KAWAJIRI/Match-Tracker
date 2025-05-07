@@ -1,178 +1,225 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useDuel } from '@/lib/context';
-import { CoinResult, TurnOrder, MatchResult } from '@/lib/types';
+import { CoinResult, TurnOrder, MatchResult, TRANSLATIONS } from '@/lib/types';
+
+// ラジオグループコンポーネント
+interface RadioGroupFieldProps {
+  title: string;
+  value: string | null;
+  onChange: (value: any) => void;
+  options: {
+    value: string;
+    label: string;
+  }[];
+}
+
+function RadioGroupField({ title, value, onChange, options }: RadioGroupFieldProps) {
+  return (
+    <div>
+      <h3 className="text-lg font-medium mb-2">{title}</h3>
+      <RadioGroup
+        value={value || ''}
+        onValueChange={onChange}
+        className="flex space-x-4"
+      >
+        {options.map(option => (
+          <div key={option.value} className="flex items-center space-x-2">
+            <RadioGroupItem value={option.value} id={`${title}-${option.value}`} />
+            <Label htmlFor={`${title}-${option.value}`}>{option.label}</Label>
+          </div>
+        ))}
+      </RadioGroup>
+    </div>
+  );
+}
+
+// デッキ選択コンポーネント
+interface DeckSelectorProps {
+  title: string;
+  value: string;
+  onChange: (value: string) => void;
+  knownDecks: string[];
+}
+
+function DeckSelector({ title, value, onChange, knownDecks }: DeckSelectorProps) {
+  const [tabValue, setTabValue] = useState(knownDecks.length > 0 ? 'existing' : 'new');
+
+  // デッキリストが変更されたときのタブ制御
+  const hasKnownDecks = knownDecks.length > 0;
+  if (!hasKnownDecks && tabValue === 'existing') {
+    setTabValue('new');
+  }
+
+  return (
+    <div>
+      <h3 className="text-lg font-medium mb-2">{title}</h3>
+      <Tabs value={tabValue} onValueChange={setTabValue}>
+        <TabsList className="mb-2">
+          <TabsTrigger value="new">新規</TabsTrigger>
+          {hasKnownDecks && (
+            <TabsTrigger value="existing">既存</TabsTrigger>
+          )}
+        </TabsList>
+        <TabsContent value="new">
+          <Input
+            placeholder="デッキ名を入力"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </TabsContent>
+        {hasKnownDecks && (
+          <TabsContent value="existing">
+            <RadioGroup
+              value={value}
+              onValueChange={onChange}
+              className="flex flex-col space-y-2"
+            >
+              {knownDecks.map((deck) => (
+                <div key={deck} className="flex items-center space-x-2">
+                  <RadioGroupItem value={deck} id={`deck-${deck}`} />
+                  <Label htmlFor={`deck-${deck}`}>{deck}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </TabsContent>
+        )}
+      </Tabs>
+    </div>
+  );
+}
+
+// 初期状態
+const initialFormState = {
+  coin: null as CoinResult,
+  turnOrder: null as TurnOrder,
+  result: null as MatchResult,
+  myDeck: '',
+  opponentDeck: ''
+};
 
 export function DuelForm() {
   const { addRecord, knownDecks } = useDuel();
+  const [formState, setFormState] = useState(initialFormState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [coin, setCoin] = useState<CoinResult>(null);
-  const [turnOrder, setTurnOrder] = useState<TurnOrder>(null);
-  const [result, setResult] = useState<MatchResult>(null);
-  const [myDeck, setMyDeck] = useState('');
-  const [opponentDeck, setOpponentDeck] = useState('');
+  // フォーム状態の更新ハンドラ
+  const updateFormState = useCallback(<K extends keyof typeof initialFormState>(
+    key: K,
+    value: typeof initialFormState[K]
+  ) => {
+    setFormState(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  }, []);
 
-  const [myDeckTab, setMyDeckTab] = useState('new');
-  const [opponentDeckTab, setOpponentDeckTab] = useState('new');
-
-  const handleSubmit = () => {
+  // フォーム送信ハンドラ
+  const handleSubmit = useCallback(() => {
+    const { coin, turnOrder, result, myDeck, opponentDeck } = formState;
+    
+    // 必須項目の検証
     if (!coin || !turnOrder || !result || !myDeck || !opponentDeck) {
       alert('すべての項目を入力してください');
       return;
     }
 
-    addRecord({
-      coin,
-      turnOrder,
-      result,
-      myDeck,
-      opponentDeck
-    });
+    setIsSubmitting(true);
 
-    // フォームをリセット
-    setCoin(null);
-    setTurnOrder(null);
-    setResult(null);
-    setMyDeck('');
-    setOpponentDeck('');
-    setMyDeckTab('new');
-    setOpponentDeckTab('new');
-  };
+    try {
+      // デュエル記録の追加
+      addRecord({
+        coin,
+        turnOrder,
+        result,
+        myDeck,
+        opponentDeck
+      });
+
+      // フォームをリセット
+      setFormState(initialFormState);
+    } catch (error) {
+      console.error('記録の保存に失敗しました:', error);
+      alert('記録の保存に失敗しました');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formState, addRecord]);
+
+  // コイントスオプション
+  const coinOptions = [
+    { value: 'heads', label: TRANSLATIONS.coin.heads },
+    { value: 'tails', label: TRANSLATIONS.coin.tails }
+  ];
+
+  // ターン順オプション
+  const turnOptions = [
+    { value: 'first', label: TRANSLATIONS.turn.first },
+    { value: 'second', label: TRANSLATIONS.turn.second }
+  ];
+
+  // 勝敗オプション
+  const resultOptions = [
+    { value: 'win', label: TRANSLATIONS.result.win },
+    { value: 'lose', label: TRANSLATIONS.result.lose }
+  ];
 
   return (
     <Card className="w-full mb-6">
+      <CardHeader>
+        <CardTitle>デュエル記録</CardTitle>
+      </CardHeader>
       <CardContent className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* コイン選択 */}
-          <div>
-            <h3 className="text-lg font-medium mb-2">コイントス</h3>
-            <RadioGroup
-              value={coin || ''}
-              onValueChange={(value) => setCoin(value as CoinResult)}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="heads" id="heads" />
-                <Label htmlFor="heads">表</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="tails" id="tails" />
-                <Label htmlFor="tails">裏</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <RadioGroupField
+            title="コイントス"
+            value={formState.coin}
+            onChange={(value) => updateFormState('coin', value as CoinResult)}
+            options={coinOptions}
+          />
 
           {/* 先攻後攻選択 */}
-          <div>
-            <h3 className="text-lg font-medium mb-2">順番</h3>
-            <RadioGroup
-              value={turnOrder || ''}
-              onValueChange={(value) => setTurnOrder(value as TurnOrder)}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="first" id="first" />
-                <Label htmlFor="first">先攻</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="second" id="second" />
-                <Label htmlFor="second">後攻</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <RadioGroupField
+            title="順番"
+            value={formState.turnOrder}
+            onChange={(value) => updateFormState('turnOrder', value as TurnOrder)}
+            options={turnOptions}
+          />
 
           {/* 勝敗選択 */}
-          <div>
-            <h3 className="text-lg font-medium mb-2">結果</h3>
-            <RadioGroup
-              value={result || ''}
-              onValueChange={(value) => setResult(value as MatchResult)}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="win" id="win" />
-                <Label htmlFor="win">勝利</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="lose" id="lose" />
-                <Label htmlFor="lose">敗北</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <RadioGroupField
+            title="結果"
+            value={formState.result}
+            onChange={(value) => updateFormState('result', value as MatchResult)}
+            options={resultOptions}
+          />
 
           {/* 自分のデッキ選択 */}
           <div className="md:col-span-3 lg:col-span-1">
-            <h3 className="text-lg font-medium mb-2">自分のデッキ</h3>
-            <Tabs value={myDeckTab} onValueChange={setMyDeckTab}>
-              <TabsList className="mb-2">
-                <TabsTrigger value="new">新規</TabsTrigger>
-                {knownDecks.myDecks.length > 0 && (
-                  <TabsTrigger value="existing">既存</TabsTrigger>
-                )}
-              </TabsList>
-              <TabsContent value="new">
-                <Input
-                  placeholder="デッキ名を入力"
-                  value={myDeck}
-                  onChange={(e) => setMyDeck(e.target.value)}
-                />
-              </TabsContent>
-              <TabsContent value="existing">
-                <RadioGroup
-                  value={myDeck}
-                  onValueChange={setMyDeck}
-                  className="flex flex-col space-y-2"
-                >
-                  {knownDecks.myDecks.map((deck) => (
-                    <div key={deck} className="flex items-center space-x-2">
-                      <RadioGroupItem value={deck} id={`my-${deck}`} />
-                      <Label htmlFor={`my-${deck}`}>{deck}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </TabsContent>
-            </Tabs>
+            <DeckSelector
+              title="自分のデッキ"
+              value={formState.myDeck}
+              onChange={(value) => updateFormState('myDeck', value)}
+              knownDecks={knownDecks.myDecks}
+            />
           </div>
 
           {/* 相手のデッキ選択 */}
           <div className="md:col-span-3 lg:col-span-1">
-            <h3 className="text-lg font-medium mb-2">相手のデッキ</h3>
-            <Tabs value={opponentDeckTab} onValueChange={setOpponentDeckTab}>
-              <TabsList className="mb-2">
-                <TabsTrigger value="new">新規</TabsTrigger>
-                {knownDecks.opponentDecks.length > 0 && (
-                  <TabsTrigger value="existing">既存</TabsTrigger>
-                )}
-              </TabsList>
-              <TabsContent value="new">
-                <Input
-                  placeholder="デッキ名を入力"
-                  value={opponentDeck}
-                  onChange={(e) => setOpponentDeck(e.target.value)}
-                />
-              </TabsContent>
-              <TabsContent value="existing">
-                <RadioGroup
-                  value={opponentDeck}
-                  onValueChange={setOpponentDeck}
-                  className="flex flex-col space-y-2"
-                >
-                  {knownDecks.opponentDecks.map((deck) => (
-                    <div key={deck} className="flex items-center space-x-2">
-                      <RadioGroupItem value={deck} id={`op-${deck}`} />
-                      <Label htmlFor={`op-${deck}`}>{deck}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </TabsContent>
-            </Tabs>
+            <DeckSelector
+              title="相手のデッキ"
+              value={formState.opponentDeck}
+              onChange={(value) => updateFormState('opponentDeck', value)}
+              knownDecks={knownDecks.opponentDecks}
+            />
           </div>
 
           {/* 記録ボタン */}
@@ -181,8 +228,9 @@ export function DuelForm() {
               onClick={handleSubmit} 
               className="w-full"
               size="lg"
+              disabled={isSubmitting}
             >
-              記録する
+              {isSubmitting ? '保存中...' : '記録する'}
             </Button>
           </div>
         </div>

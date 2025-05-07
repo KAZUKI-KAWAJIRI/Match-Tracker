@@ -1,20 +1,21 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CoinResult, TurnOrder, MatchResult, DuelRecord, Stats } from './types';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { CoinResult, TurnOrder, MatchResult, DuelRecord, Stats, KnownDecks } from './types';
+import { calculateStatsFromRecords } from './utils';
 import { v4 as uuidv4 } from 'uuid';
 
 interface DuelContextType {
   records: DuelRecord[];
   addRecord: (record: Omit<DuelRecord, 'id' | 'date'>) => void;
   calculateStats: () => Stats;
-  knownDecks: {
-    myDecks: string[];
-    opponentDecks: string[];
-  };
+  knownDecks: KnownDecks;
+  clearAllRecords: () => void;
 }
 
 const DuelContext = createContext<DuelContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'duelRecords';
 
 export function useDuel() {
   const context = useContext(DuelContext);
@@ -26,111 +27,82 @@ export function useDuel() {
 
 export function DuelProvider({ children }: { children: React.ReactNode }) {
   const [records, setRecords] = useState<DuelRecord[]>([]);
-  const [knownDecks, setKnownDecks] = useState<{ myDecks: string[], opponentDecks: string[] }>({
+  const [knownDecks, setKnownDecks] = useState<KnownDecks>({
     myDecks: [],
     opponentDecks: []
   });
 
   // ローカルストレージからデータを読み込む
   useEffect(() => {
-    const savedRecords = localStorage.getItem('duelRecords');
-    if (savedRecords) {
-      const parsedRecords = JSON.parse(savedRecords) as DuelRecord[];
-      // 日付文字列をDateオブジェクトに変換
-      const recordsWithDates = parsedRecords.map(record => ({
-        ...record,
-        date: new Date(record.date)
-      }));
-      setRecords(recordsWithDates);
+    try {
+      const savedRecords = localStorage.getItem(STORAGE_KEY);
+      if (savedRecords) {
+        const parsedRecords = JSON.parse(savedRecords) as DuelRecord[];
+        // 日付文字列をDateオブジェクトに変換
+        const recordsWithDates = parsedRecords.map(record => ({
+          ...record,
+          date: new Date(record.date)
+        }));
+        setRecords(recordsWithDates);
+      }
+    } catch (error) {
+      console.error('ローカルストレージからのデータ読み込みエラー:', error);
     }
   }, []);
 
-  // 記録が変更されたらローカルストレージに保存
+  // 既知のデッキリストを更新
   useEffect(() => {
     if (records.length > 0) {
-      localStorage.setItem('duelRecords', JSON.stringify(records));
+      const myDecks = Array.from(new Set(records.map(r => r.myDeck)));
+      const opponentDecks = Array.from(new Set(records.map(r => r.opponentDeck)));
       
-      // 既知のデッキリストを更新
-      const myDecks = Array.from(new Set(records.map(r => r.myDeck).filter(Boolean)));
-      const opponentDecks = Array.from(new Set(records.map(r => r.opponentDeck).filter(Boolean)));
-      
-      setKnownDecks({
-        myDecks,
-        opponentDecks
-      });
+      setKnownDecks({ myDecks, opponentDecks });
+    }
+  }, [records]);
+
+  // 記録が変更されたらローカルストレージに保存
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    } catch (error) {
+      console.error('ローカルストレージへのデータ保存エラー:', error);
     }
   }, [records]);
 
   // 新しい記録を追加
-  const addRecord = (record: Omit<DuelRecord, 'id' | 'date'>) => {
+  const addRecord = useCallback((record: Omit<DuelRecord, 'id' | 'date'>) => {
     const newRecord: DuelRecord = {
       ...record,
       id: uuidv4(),
       date: new Date()
     };
     setRecords(prev => [...prev, newRecord]);
-  };
+  }, []);
 
-  // 統計情報を計算
-  const calculateStats = (): Stats => {
-    const totalMatches = records.length;
-    
-    if (totalMatches === 0) {
-      return {
-        totalMatches: 0,
-        coinStats: {
-          heads: 0,
-          tails: 0,
-          headsPercentage: 0,
-          tailsPercentage: 0
-        },
-        turnStats: {
-          first: 0,
-          second: 0,
-          firstPercentage: 0,
-          secondPercentage: 0
-        },
-        resultStats: {
-          wins: 0,
-          losses: 0,
-          winPercentage: 0
-        }
-      };
+  // すべての記録をクリア
+  const clearAllRecords = useCallback(() => {
+    if (window.confirm('全ての記録を削除してもよろしいですか？この操作は元に戻せません。')) {
+      setRecords([]);
+      localStorage.removeItem(STORAGE_KEY);
     }
+  }, []);
 
-    const heads = records.filter(r => r.coin === 'heads').length;
-    const tails = records.filter(r => r.coin === 'tails').length;
-    
-    const first = records.filter(r => r.turnOrder === 'first').length;
-    const second = records.filter(r => r.turnOrder === 'second').length;
-    
-    const wins = records.filter(r => r.result === 'win').length;
-    const losses = records.filter(r => r.result === 'lose').length;
+  // 統計情報を計算 - メモ化して不要な再計算を防止
+  const calculateStats = useCallback(() => {
+    return calculateStatsFromRecords(records);
+  }, [records]);
 
-    return {
-      totalMatches,
-      coinStats: {
-        heads,
-        tails,
-        headsPercentage: totalMatches > 0 ? Math.round((heads / totalMatches) * 100) : 0,
-        tailsPercentage: totalMatches > 0 ? Math.round((tails / totalMatches) * 100) : 0
-      },
-      turnStats: {
-        first,
-        second,
-        firstPercentage: totalMatches > 0 ? Math.round((first / totalMatches) * 100) : 0,
-        secondPercentage: totalMatches > 0 ? Math.round((second / totalMatches) * 100) : 0
-      },
-      resultStats: {
-        wins,
-        losses,
-        winPercentage: totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
-      }
-    };
-  };
+  // コンテキスト値をメモ化
+  const contextValue = useMemo(() => ({
+    records,
+    addRecord,
+    calculateStats,
+    knownDecks,
+    clearAllRecords
+  }), [records, addRecord, calculateStats, knownDecks, clearAllRecords]);
 
   return (
-    <DuelContext.Provider value={{ records, addRecord, calculateStats, knownDecks }}>
+    <DuelContext.Provider value={contextValue}>
       {children}
     </DuelContext.Provider>
   );
