@@ -42,4 +42,11 @@ next-env.d.ts
 *.launch
 .settings/
 *.sublime-workspace
-.vscode/ 
+.vscode/
+
+# Cursor関連ファイル
+.cursor/
+.cursor-snippets.json
+.cursorrc.json
+cursor.json
+CURSOR_SETUP.md 
