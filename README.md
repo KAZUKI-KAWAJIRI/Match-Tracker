@@ -15,8 +15,8 @@
 
 ## 🖥️ スクリーンショット
 
-![アプリのスクリーンショット](./images/app-screenshot0.png)
-![アプリのスクリーンショット](./images/app-screenshot1.png)
+![アプリのスクリーンショット](/images/app-screenshot0.png)
+![アプリのスクリーンショット](/images/app-screenshot1.png)
 
 
 ## 🛠️ 技術スタック
