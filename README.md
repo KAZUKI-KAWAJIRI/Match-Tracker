@@ -91,16 +91,6 @@ npm start
 - **API対応**: 外部サービスとの連携
 - **ソーシャル機能**: フレンドとの対戦記録の共有
 
-## 👥 コントリビューション
-
-コントリビューションは大歓迎です！以下の手順に従ってください：
-
-1. このリポジトリをフォーク
-2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
-
 ## ⚖️ ライセンス
 
 [MIT](https://choosealicense.com/licenses/mit/) ライセンスの下で配布されています。
