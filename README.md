@@ -105,12 +105,4 @@ npm start
 
 [MIT](https://choosealicense.com/licenses/mit/) ライセンスの下で配布されています。
 
-## 📬 お問い合わせ
-
-質問や提案がある場合は、Issuesを作成するか、以下のコンタクト先にご連絡ください：
-
-*（連絡先があれば、ここに記載）*
-
 ---
-
-Made with ❤️ by KAZUKI KAWAJIRI 
