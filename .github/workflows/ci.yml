@@ -30,8 +30,11 @@ jobs:
       - name: Biome lint and format check
         run: npx @biomejs/biome check ./
         
-      - name: Build application
+      - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         
       - name: Setup tests
         # テスト実行前に必要な設定
