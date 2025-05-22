@@ -28,7 +28,7 @@ jobs:
         run: npx tsc --noEmit
         
       - name: Biome lint and format check
-        run: npx @biomejs/biome check --write ./
+        run: npx @biomejs/biome check ./
         
       - name: Build application
         run: npm run build
