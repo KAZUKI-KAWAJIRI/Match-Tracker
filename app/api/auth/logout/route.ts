@@ -25,12 +25,12 @@ export async function POST() {
     // クッキーを削除（シンプルにして安全な方法）
     response.headers.set(
       'Set-Cookie',
-      `sb-refresh-token=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
+      'sb-refresh-token=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
     );
 
     response.headers.set(
       'Set-Cookie',
-      `sb-access-token=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
+      'sb-access-token=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
     );
 
     return response;

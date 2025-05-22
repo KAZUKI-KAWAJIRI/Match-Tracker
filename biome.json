@@ -6,14 +6,26 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
     },
-    "ignore": ["__tests__/global.d.ts", "__tests__/module-declarations.d.ts"]
+    "ignore": [
+      "__tests__/global.d.ts", 
+      "__tests__/module-declarations.d.ts",
+      ".next/**",
+      "node_modules/**"
+    ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "ignore": [
+      ".next/**",
+      "node_modules/**"
+    ]
   },
   "javascript": {
     "formatter": {

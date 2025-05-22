@@ -89,7 +89,7 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
 
     const userId = getUserIdFromLocalStorage();
     if (userId) {
-      console.log('認証済みユーザーIDを検出:', userId.substring(0, 8) + '...');
+      console.log('認証済みユーザーIDを検出:', `${userId.substring(0, 8)}...`);
       setStorageKey(`${STORAGE_KEY}_${userId}`);
     } else {
       console.log('未認証ユーザー: 共有ストレージキーを使用');

@@ -9,9 +9,9 @@ describe('DuelService', () => {
   beforeEach(() => {
     // プライベートな実装の詳細にアクセスするためのワークアラウンド
     // @ts-ignore
-    duelService['inMemoryRecords'] = {};
+    duelService.inMemoryRecords = {};
     // @ts-ignore
-    duelService['inMemoryDecks'] = {};
+    duelService.inMemoryDecks = {};
   });
 
   test('初期状態では空の配列を返す', async () => {

@@ -73,7 +73,7 @@ export function SignIn() {
   if (status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
       </div>
     );
   }
@@ -133,7 +133,7 @@ export function SignIn() {
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (
               <span className="flex items-center justify-center">
-                <span className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></span>
+                <span className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full" />
                 ログイン中...
               </span>
             ) : (
