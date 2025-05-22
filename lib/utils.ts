@@ -8,7 +8,10 @@ export function cn(...inputs: ClassValue[]) {
 
 // パーセンテージを計算する関数
 export const calculatePercentage = (part: number, total: number): number => {
-  return total > 0 ? Math.round((part / total) * 100) : 0;
+  if (total === 0) return 0;
+  const percentage = (part / total) * 100;
+  // 小数点第3位を四捨五入して小数点第2位までの値を返す
+  return Math.round(percentage * 100) / 100;
 };
 
 // デュエル記録から統計を計算する関数
@@ -40,31 +43,34 @@ export const calculateStatsFromRecords = (records: DuelRecord[]): Stats => {
 
   const heads = records.filter(r => r.coin === 'heads').length;
   const tails = records.filter(r => r.coin === 'tails').length;
+  const validCoinRecords = heads + tails; // nullを除外した有効なコイントスレコード数
   
   const first = records.filter(r => r.turnOrder === 'first').length;
   const second = records.filter(r => r.turnOrder === 'second').length;
+  const validTurnRecords = first + second; // nullを除外した有効な手番レコード数
   
   const wins = records.filter(r => r.result === 'win').length;
   const losses = records.filter(r => r.result === 'lose').length;
+  const validResultRecords = wins + losses; // nullを除外した有効な勝敗レコード数
 
   return {
     totalMatches,
     coinStats: {
       heads,
       tails,
-      headsPercentage: calculatePercentage(heads, totalMatches),
-      tailsPercentage: calculatePercentage(tails, totalMatches)
+      headsPercentage: calculatePercentage(heads, validCoinRecords),
+      tailsPercentage: calculatePercentage(tails, validCoinRecords)
     },
     turnStats: {
       first,
       second,
-      firstPercentage: calculatePercentage(first, totalMatches),
-      secondPercentage: calculatePercentage(second, totalMatches)
+      firstPercentage: calculatePercentage(first, validTurnRecords),
+      secondPercentage: calculatePercentage(second, validTurnRecords)
     },
     resultStats: {
       wins,
       losses,
-      winPercentage: calculatePercentage(wins, totalMatches)
+      winPercentage: calculatePercentage(wins, validResultRecords)
     }
   };
 };

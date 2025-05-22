@@ -1,12 +1,12 @@
 'use client';
 
+import React, { useMemo, useState } from 'react';
 import { useDuel } from '@/lib/context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { translate, groupRecordsByDate, sortDateStrings } from '@/lib/utils';
-import { useState, useMemo } from 'react';
-import { Stats } from '@/lib/types';
+import { DuelRecord, Stats } from '@/lib/types';
 
 // 統計情報を表示するコンポーネント
 function StatsCard({ stats }: { stats: Stats }) {
@@ -51,14 +51,14 @@ function DateRecordCard({ dateStr, records }: { dateStr: string; records: Return
           <TableHeader>
             <TableRow>
               <TableHead>コイン</TableHead>
-              <TableHead>順番</TableHead>
+              <TableHead>手番</TableHead>
               <TableHead>結果</TableHead>
-              <TableHead>自分のデッキ</TableHead>
-              <TableHead>相手のデッキ</TableHead>
+              <TableHead>使用デッキ</TableHead>
+              <TableHead>対戦デッキ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {records.map((record) => (
+            {records.map((record: DuelRecord) => (
               <TableRow key={record.id}>
                 <TableCell>{translate.coin(record.coin)}</TableCell>
                 <TableCell>{translate.turn(record.turnOrder)}</TableCell>
@@ -123,7 +123,7 @@ export function DuelRecords() {
             onChange={(e) => setFilterDate(e.target.value || null)}
           >
             <option value="">全ての日付</option>
-            {dates.map(date => (
+            {dates.map((date: string) => (
               <option key={date} value={date}>{date}</option>
             ))}
           </select>
@@ -132,7 +132,7 @@ export function DuelRecords() {
 
       {/* デュエル記録一覧 */}
       {dates.length > 0 ? (
-        displayDates.map((dateStr) => (
+        displayDates.map((dateStr: string) => (
           <DateRecordCard 
             key={dateStr} 
             dateStr={dateStr} 

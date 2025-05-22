@@ -1,0 +1,14 @@
+# コードオーナーの設定
+# https://docs.github.com/ja/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# デフォルトのオーナー
+*       @KAZUKI-KAWAJIRI
+
+# テスト関連のファイル
+/__tests__/  @KAZUKI-KAWAJIRI
+
+# コンポーネント関連のファイル
+/components/ @KAZUKI-KAWAJIRI
+
+# APIルート関連のファイル
+/app/api/    @KAZUKI-KAWAJIRI

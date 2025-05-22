@@ -25,13 +25,18 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "jest.d.ts",
+    "jest.setup.js",
+    "__tests__/global.d.ts",
+    "__tests__/module-declarations.d.ts"
   ],
   "exclude": [
     "node_modules"
