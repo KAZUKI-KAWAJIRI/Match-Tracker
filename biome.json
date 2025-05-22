@@ -12,20 +12,18 @@
       }
     },
     "ignore": [
-      "__tests__/global.d.ts", 
+      "__tests__/global.d.ts",
       "__tests__/module-declarations.d.ts",
       ".next/**",
-      "node_modules/**"
+      "node_modules/**",
+      "coverage/**"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": [
-      ".next/**",
-      "node_modules/**"
-    ]
+    "ignore": [".next/**", "node_modules/**", "coverage/**"]
   },
   "javascript": {
     "formatter": {
