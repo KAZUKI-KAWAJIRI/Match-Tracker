@@ -15,7 +15,10 @@ import { useState } from 'react';
 
 export function ImportButton() {
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: 'success' | 'error';
+  } | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const { isLocalStorage, importToDatabase, records } = useDuel();
   const { isAuthenticated } = useAuth();
@@ -31,11 +34,14 @@ export function ImportButton() {
       setMessage(null);
 
       const result = await importToDatabase();
-      
+
       if (result.success) {
         setMessage({ text: result.message, type: 'success' });
       } else {
-        setMessage({ text: result.message || 'インポートに失敗しました', type: 'error' });
+        setMessage({
+          text: result.message || 'インポートに失敗しました',
+          type: 'error',
+        });
       }
     } catch (error) {
       console.error('インポートエラー:', error);
@@ -54,9 +60,9 @@ export function ImportButton() {
 
   return (
     <>
-      <Button 
-        variant="outline" 
-        size="sm" 
+      <Button
+        variant="outline"
+        size="sm"
         onClick={() => setOpen(true)}
         disabled={!isAuthenticated}
       >
@@ -68,13 +74,19 @@ export function ImportButton() {
           <DialogHeader>
             <DialogTitle>データ保存先の変更</DialogTitle>
             <DialogDescription>
-              現在のデータ保存先は <strong>{isLocalStorage ? 'ローカルストレージ' : 'データベース'}</strong> です。
+              現在のデータ保存先は{' '}
+              <strong>
+                {isLocalStorage ? 'ローカルストレージ' : 'データベース'}
+              </strong>{' '}
+              です。
             </DialogDescription>
           </DialogHeader>
 
           <div className="p-4">
             {message && (
-              <div className={`p-3 mb-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              <div
+                className={`p-3 mb-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+              >
                 {message.text}
               </div>
             )}
@@ -94,8 +106,8 @@ export function ImportButton() {
 
           <DialogFooter>
             {isLocalStorage && isAuthenticated && (
-              <Button 
-                onClick={handleImport} 
+              <Button
+                onClick={handleImport}
                 disabled={isImporting || records.length === 0}
               >
                 {isImporting ? (
@@ -116,4 +128,4 @@ export function ImportButton() {
       </Dialog>
     </>
   );
-} 
+}

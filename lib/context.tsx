@@ -193,22 +193,25 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
   }, [records]);
 
   // データベースへのインポート機能
-  const importToDatabase = useCallback(async (): Promise<{ success: boolean; message: string }> => {
+  const importToDatabase = useCallback(async (): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
     try {
       // ここに実際のインポートロジックを実装
       // 例えば、Supabaseにデータを送信するなど
       console.log('データベースへのインポート開始', records.length);
-      
+
       // モックの成功レスポンス - 実際の実装では実際のAPIコールが必要
-      return { 
-        success: true, 
-        message: 'インポートに成功しました' 
+      return {
+        success: true,
+        message: 'インポートに成功しました',
       };
     } catch (error) {
       console.error('インポートエラー:', error);
-      return { 
-        success: false, 
-        message: 'インポートに失敗しました' 
+      return {
+        success: false,
+        message: 'インポートに失敗しました',
       };
     }
   }, [records]);
