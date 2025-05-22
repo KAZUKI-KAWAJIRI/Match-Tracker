@@ -27,7 +27,7 @@ const customJestConfig = {
     '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
   // テスト環境
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   // コードカバレッジ設定
   collectCoverage: true,
   collectCoverageFrom: [

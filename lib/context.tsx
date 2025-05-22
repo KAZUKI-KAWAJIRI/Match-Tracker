@@ -27,6 +27,8 @@ interface DuelContextType {
   knownDecks: KnownDecks;
   clearAllRecords: () => void;
   storageKey: string;
+  isLocalStorage: boolean;
+  importToDatabase: () => Promise<{ success: boolean; message: string }>;
 }
 
 const DuelContext = createContext<DuelContextType | undefined>(undefined);
@@ -82,6 +84,7 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
     opponentDecks: [],
   });
   const [initialized, setInitialized] = useState(false);
+  const [isLocalStorage, setIsLocalStorage] = useState(true);
 
   // クライアントサイドでのみ認証情報を取得してストレージキーを設定
   useEffect(() => {
@@ -189,6 +192,27 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
     return calculateStatsFromRecords(records);
   }, [records]);
 
+  // データベースへのインポート機能
+  const importToDatabase = useCallback(async (): Promise<{ success: boolean; message: string }> => {
+    try {
+      // ここに実際のインポートロジックを実装
+      // 例えば、Supabaseにデータを送信するなど
+      console.log('データベースへのインポート開始', records.length);
+      
+      // モックの成功レスポンス - 実際の実装では実際のAPIコールが必要
+      return { 
+        success: true, 
+        message: 'インポートに成功しました' 
+      };
+    } catch (error) {
+      console.error('インポートエラー:', error);
+      return { 
+        success: false, 
+        message: 'インポートに失敗しました' 
+      };
+    }
+  }, [records]);
+
   // コンテキスト値をメモ化
   const contextValue = useMemo(
     () => ({
@@ -198,6 +222,8 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
       knownDecks,
       clearAllRecords,
       storageKey,
+      isLocalStorage,
+      importToDatabase,
     }),
     [
       records,
@@ -206,6 +232,8 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
       knownDecks,
       clearAllRecords,
       storageKey,
+      isLocalStorage,
+      importToDatabase,
     ],
   );
 
