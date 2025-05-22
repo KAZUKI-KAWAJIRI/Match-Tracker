@@ -1,69 +1,79 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/lib/hooks/useAuth'
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useAuth } from '@/lib/hooks/useAuth';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export function SignUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
-  const { signUp, status, isAuthenticated } = useAuth()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
+  const { signUp, status, isAuthenticated } = useAuth();
 
   useEffect(() => {
     // ユーザーが認証済みの場合はダッシュボードにリダイレクト
     if (isAuthenticated) {
-      router.push('/dashboard')
+      router.push('/dashboard');
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, router]);
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!email || !password || !confirmPassword) {
-      setError('すべての項目を入力してください')
-      return
+      setError('すべての項目を入力してください');
+      return;
     }
-    
+
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
-      return
+      setError('パスワードが一致しません');
+      return;
     }
-    
+
     try {
-      setError(null)
-      setLoading(true)
-      
-      const { success, error: signUpError } = await signUp(email, password)
-      
+      setError(null);
+      setLoading(true);
+
+      const { success, error: signUpError } = await signUp(email, password);
+
       if (!success && signUpError) {
-        throw new Error(signUpError)
+        throw new Error(signUpError);
       }
-      
-      setSuccess(true)
+
+      setSuccess(true);
       // 成功メッセージを表示
     } catch (error: any) {
-      console.error('アカウント作成エラー:', error)
-      setError(error.message || 'アカウント作成に失敗しました。もう一度お試しください。')
+      console.error('アカウント作成エラー:', error);
+      setError(
+        error.message ||
+          'アカウント作成に失敗しました。もう一度お試しください。',
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
 
   if (success) {
@@ -76,7 +86,8 @@ export function SignUp() {
         <CardContent>
           <div className="text-center space-y-4">
             <p>
-              {email} 宛に確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。
+              {email}{' '}
+              宛に確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。
             </p>
             <Button onClick={() => router.push('/login')} className="mt-4">
               ログインページへ
@@ -84,7 +95,7 @@ export function SignUp() {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -100,7 +111,7 @@ export function SignUp() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
               メールアドレス
@@ -115,7 +126,7 @@ export function SignUp() {
               autoComplete="email"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium">
               パスワード
@@ -129,11 +140,9 @@ export function SignUp() {
               required
               autoComplete="new-password"
             />
-            <p className="text-xs text-gray-500">
-              8文字以上で設定してください
-            </p>
+            <p className="text-xs text-gray-500">8文字以上で設定してください</p>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="confirmPassword" className="text-sm font-medium">
               パスワード（確認）
@@ -148,12 +157,8 @@ export function SignUp() {
               autoComplete="new-password"
             />
           </div>
-          
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loading}
-          >
+
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (
               <span className="flex items-center justify-center">
                 <span className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></span>
@@ -167,12 +172,12 @@ export function SignUp() {
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-gray-600">
-          すでにアカウントをお持ちの場合は 
+          すでにアカウントをお持ちの場合は
           <Link href="/login" className="text-blue-600 hover:underline ml-1">
             ログイン
           </Link>
         </p>
       </CardFooter>
     </Card>
-  )
-} 
+  );
+}

@@ -11,13 +11,13 @@ declare module '@testing-library/react' {
 }
 
 declare module '@/components/ImportButton' {
-  import React from 'react';
+  import type React from 'react';
   export const ImportButton: React.FC<any>;
 }
 
 declare module '@/lib/context' {
   export const useDuel: () => any;
-  export const DuelProvider: React.FC<{children: React.ReactNode}>;
+  export const DuelProvider: React.FC<{ children: React.ReactNode }>;
 }
 
 declare module '@/lib/hooks/useAuth' {
@@ -36,19 +36,27 @@ declare module '@/lib/services/duelService' {
 }
 
 declare module '@/lib/utils' {
-  import { type ClassValue } from 'clsx';
-  import { CoinResult, DuelRecord, MatchResult, Stats, TurnOrder } from "@/lib/types";
-  
+  import type { ClassValue } from 'clsx';
+  import type {
+    CoinResult,
+    DuelRecord,
+    MatchResult,
+    Stats,
+    TurnOrder,
+  } from '@/lib/types';
+
   export function cn(...inputs: ClassValue[]): string;
   export const calculatePercentage: (part: number, total: number) => number;
   export const calculateStatsFromRecords: (records: DuelRecord[]) => Stats;
-  
+
   export const translate: {
     coin: (value: CoinResult) => string;
     turn: (value: TurnOrder) => string;
     result: (value: MatchResult) => string;
   };
-  
-  export const groupRecordsByDate: (records: DuelRecord[]) => Record<string, DuelRecord[]>;
+
+  export const groupRecordsByDate: (
+    records: DuelRecord[],
+  ) => Record<string, DuelRecord[]>;
   export const sortDateStrings: (dates: string[]) => string[];
-} 
+}

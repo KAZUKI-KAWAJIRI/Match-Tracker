@@ -1,27 +1,37 @@
 'use client';
 
-import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDuel } from '@/lib/context';
-import { CoinResult, TurnOrder, MatchResult, TRANSLATIONS } from '@/lib/types';
+import {
+  type CoinResult,
+  type MatchResult,
+  TRANSLATIONS,
+  type TurnOrder,
+} from '@/lib/types';
+import { useCallback, useState } from 'react';
 
 // ラジオグループコンポーネント
 interface RadioGroupFieldProps {
   title: string;
   value: string | null;
-  onChange: (value: any) => void;
+  onChange: (value: string) => void;
   options: {
     value: string;
     label: string;
   }[];
 }
 
-function RadioGroupField({ title, value, onChange, options }: RadioGroupFieldProps) {
+function RadioGroupField({
+  title,
+  value,
+  onChange,
+  options,
+}: RadioGroupFieldProps) {
   return (
     <div>
       <h3 className="text-lg font-medium mb-2">{title}</h3>
@@ -30,9 +40,12 @@ function RadioGroupField({ title, value, onChange, options }: RadioGroupFieldPro
         onValueChange={onChange}
         className="flex space-x-4"
       >
-        {options.map(option => (
+        {options.map((option) => (
           <div key={option.value} className="flex items-center space-x-2">
-            <RadioGroupItem value={option.value} id={`${title}-${option.value}`} />
+            <RadioGroupItem
+              value={option.value}
+              id={`${title}-${option.value}`}
+            />
             <Label htmlFor={`${title}-${option.value}`}>{option.label}</Label>
           </div>
         ))}
@@ -49,8 +62,15 @@ interface DeckSelectorProps {
   knownDecks: string[];
 }
 
-function DeckSelector({ title, value, onChange, knownDecks }: DeckSelectorProps) {
-  const [tabValue, setTabValue] = useState(knownDecks.length > 0 ? 'existing' : 'new');
+function DeckSelector({
+  title,
+  value,
+  onChange,
+  knownDecks,
+}: DeckSelectorProps) {
+  const [tabValue, setTabValue] = useState(
+    knownDecks.length > 0 ? 'existing' : 'new',
+  );
 
   // デッキリストが変更されたときのタブ制御
   const hasKnownDecks = knownDecks.length > 0;
@@ -64,9 +84,7 @@ function DeckSelector({ title, value, onChange, knownDecks }: DeckSelectorProps)
       <Tabs value={tabValue} onValueChange={setTabValue}>
         <TabsList className="mb-2">
           <TabsTrigger value="new">新規</TabsTrigger>
-          {hasKnownDecks && (
-            <TabsTrigger value="existing">既存</TabsTrigger>
-          )}
+          {hasKnownDecks && <TabsTrigger value="existing">既存</TabsTrigger>}
         </TabsList>
         <TabsContent value="new">
           <Input
@@ -102,7 +120,7 @@ const initialFormState = {
   turnOrder: null as TurnOrder,
   result: null as MatchResult,
   myDeck: '',
-  opponentDeck: ''
+  opponentDeck: '',
 };
 
 export function DuelForm() {
@@ -111,20 +129,23 @@ export function DuelForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // フォーム状態の更新ハンドラ
-  const updateFormState = useCallback(<K extends keyof typeof initialFormState>(
-    key: K,
-    value: typeof initialFormState[K]
-  ) => {
-    setFormState(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  }, []);
+  const updateFormState = useCallback(
+    <K extends keyof typeof initialFormState>(
+      key: K,
+      value: (typeof initialFormState)[K],
+    ) => {
+      setFormState((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    },
+    [],
+  );
 
   // フォーム送信ハンドラ
   const handleSubmit = useCallback(() => {
     const { coin, turnOrder, result, myDeck, opponentDeck } = formState;
-    
+
     // 必須項目の検証
     if (!coin || !turnOrder || !result || !myDeck || !opponentDeck) {
       alert('すべての項目を入力してください');
@@ -140,7 +161,7 @@ export function DuelForm() {
         turnOrder,
         result,
         myDeck,
-        opponentDeck
+        opponentDeck,
       });
 
       // フォームをリセット
@@ -156,19 +177,19 @@ export function DuelForm() {
   // コイントスオプション
   const coinOptions = [
     { value: 'heads', label: TRANSLATIONS.coin.heads },
-    { value: 'tails', label: TRANSLATIONS.coin.tails }
+    { value: 'tails', label: TRANSLATIONS.coin.tails },
   ];
 
   // ターン順オプション
   const turnOptions = [
     { value: 'first', label: TRANSLATIONS.turn.first },
-    { value: 'second', label: TRANSLATIONS.turn.second }
+    { value: 'second', label: TRANSLATIONS.turn.second },
   ];
 
   // 勝敗オプション
   const resultOptions = [
     { value: 'win', label: TRANSLATIONS.result.win },
-    { value: 'lose', label: TRANSLATIONS.result.lose }
+    { value: 'lose', label: TRANSLATIONS.result.lose },
   ];
 
   return (
@@ -190,7 +211,9 @@ export function DuelForm() {
           <RadioGroupField
             title="順番"
             value={formState.turnOrder}
-            onChange={(value) => updateFormState('turnOrder', value as TurnOrder)}
+            onChange={(value) =>
+              updateFormState('turnOrder', value as TurnOrder)
+            }
             options={turnOptions}
           />
 
@@ -198,7 +221,9 @@ export function DuelForm() {
           <RadioGroupField
             title="結果"
             value={formState.result}
-            onChange={(value) => updateFormState('result', value as MatchResult)}
+            onChange={(value) =>
+              updateFormState('result', value as MatchResult)
+            }
             options={resultOptions}
           />
 
@@ -224,8 +249,8 @@ export function DuelForm() {
 
           {/* 記録ボタン */}
           <div className="md:col-span-3 lg:col-span-1 flex items-end">
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               className="w-full"
               size="lg"
               disabled={isSubmitting}
@@ -237,4 +262,4 @@ export function DuelForm() {
       </CardContent>
     </Card>
   );
-} 
+}

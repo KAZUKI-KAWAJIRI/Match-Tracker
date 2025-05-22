@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { DuelForm } from '@/components/DuelForm'
-import { DuelRecords } from '@/components/DuelRecords'
+import { DuelForm } from '@/components/DuelForm';
+import { DuelRecords } from '@/components/DuelRecords';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -17,9 +17,11 @@ export default function Home() {
           </Link>
         </div>
       </div>
-      
+
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4">Match Trackerへようこそ！</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Match Trackerへようこそ！
+        </h2>
         <p className="mb-4">
           このアプリケーションでは、マスターデュエルの対戦結果を記録・分析することができます。
           アカウントを作成して、あなたの戦績を管理しましょう！
@@ -29,16 +31,18 @@ export default function Home() {
             <Button size="lg">今すぐ始める</Button>
           </Link>
           <Link href="/login">
-            <Button variant="outline" size="lg">ログイン</Button>
+            <Button variant="outline" size="lg">
+              ログイン
+            </Button>
           </Link>
         </div>
       </div>
-      
+
       {/* 入力フォーム */}
       <DuelForm />
-      
+
       {/* 戦績記録 */}
       <DuelRecords />
     </main>
-  )
-} 
+  );
+}

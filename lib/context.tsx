@@ -1,9 +1,24 @@
-"use client"
+'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { CoinResult, TurnOrder, MatchResult, DuelRecord, Stats, KnownDecks } from './types';
-import { calculateStatsFromRecords } from './utils';
+import type React from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  CoinResult,
+  type DuelRecord,
+  type KnownDecks,
+  MatchResult,
+  type Stats,
+  TurnOrder,
+} from './types';
+import { calculateStatsFromRecords } from './utils';
 
 interface DuelContextType {
   records: DuelRecord[];
@@ -25,7 +40,7 @@ const STORAGE_KEY = 'duelRecords';
  */
 function getUserIdFromLocalStorage(): string | null {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     // Supabase認証トークンからの取得を試みる (新形式)
     const sbToken = localStorage.getItem('sb-wzabhxqdnzkkjxbohlby-auth-token');
@@ -34,7 +49,7 @@ function getUserIdFromLocalStorage(): string | null {
       const userId = tokenData?.user?.id;
       if (userId) return userId;
     }
-    
+
     // 古い形式からの取得を試みる
     const legacyToken = localStorage.getItem('supabase.auth.token');
     if (legacyToken) {
@@ -42,7 +57,7 @@ function getUserIdFromLocalStorage(): string | null {
       const userId = tokenData?.currentSession?.user?.id;
       if (userId) return userId;
     }
-    
+
     return null;
   } catch (error) {
     console.error('ユーザーID取得エラー:', error);
@@ -64,14 +79,14 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
   const [records, setRecords] = useState<DuelRecord[]>([]);
   const [knownDecks, setKnownDecks] = useState<KnownDecks>({
     myDecks: [],
-    opponentDecks: []
+    opponentDecks: [],
   });
   const [initialized, setInitialized] = useState(false);
 
   // クライアントサイドでのみ認証情報を取得してストレージキーを設定
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const userId = getUserIdFromLocalStorage();
     if (userId) {
       console.log('認証済みユーザーIDを検出:', userId.substring(0, 8) + '...');
@@ -80,24 +95,24 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
       console.log('未認証ユーザー: 共有ストレージキーを使用');
       setStorageKey(STORAGE_KEY);
     }
-    
+
     setInitialized(true);
   }, []);
 
   // ローカルストレージからデータを読み込む
   useEffect(() => {
     if (!initialized || typeof window === 'undefined') return;
-    
+
     try {
       console.log(`ストレージキー "${storageKey}" からデータを読み込み中...`);
       const savedRecords = localStorage.getItem(storageKey);
-      
+
       if (savedRecords) {
         const parsedRecords = JSON.parse(savedRecords) as DuelRecord[];
         // 日付文字列をDateオブジェクトに変換
-        const recordsWithDates = parsedRecords.map(record => ({
+        const recordsWithDates = parsedRecords.map((record) => ({
           ...record,
-          date: new Date(record.date)
+          date: new Date(record.date),
         }));
         setRecords(recordsWithDates);
         console.log(`${recordsWithDates.length}件のレコードを読み込みました`);
@@ -116,9 +131,13 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
   // 既知のデッキリストを更新
   useEffect(() => {
     if (records.length > 0) {
-      const myDecks = Array.from(new Set(records.map(r => r.myDeck))).filter(Boolean);
-      const opponentDecks = Array.from(new Set(records.map(r => r.opponentDeck))).filter(Boolean);
-      
+      const myDecks = Array.from(new Set(records.map((r) => r.myDeck))).filter(
+        Boolean,
+      );
+      const opponentDecks = Array.from(
+        new Set(records.map((r) => r.opponentDeck)),
+      ).filter(Boolean);
+
       setKnownDecks({ myDecks, opponentDecks });
     } else {
       setKnownDecks({ myDecks: [], opponentDecks: [] });
@@ -127,8 +146,9 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
 
   // 記録が変更されたらローカルストレージに保存
   useEffect(() => {
-    if (!initialized || typeof window === 'undefined' || records.length === 0) return;
-    
+    if (!initialized || typeof window === 'undefined' || records.length === 0)
+      return;
+
     try {
       localStorage.setItem(storageKey, JSON.stringify(records));
       console.log(`${records.length}件のレコードを保存しました`);
@@ -142,14 +162,18 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
     const newRecord: DuelRecord = {
       ...record,
       id: uuidv4(),
-      date: new Date()
+      date: new Date(),
     };
-    setRecords(prev => [...prev, newRecord]);
+    setRecords((prev) => [...prev, newRecord]);
   }, []);
 
   // すべての記録をクリア
   const clearAllRecords = useCallback(() => {
-    if (window.confirm('全ての記録を削除してもよろしいですか？この操作は元に戻せません。')) {
+    if (
+      window.confirm(
+        '全ての記録を削除してもよろしいですか？この操作は元に戻せません。',
+      )
+    ) {
       setRecords([]);
       try {
         localStorage.removeItem(storageKey);
@@ -166,18 +190,26 @@ export function DuelProvider({ children }: { children: React.ReactNode }) {
   }, [records]);
 
   // コンテキスト値をメモ化
-  const contextValue = useMemo(() => ({
-    records,
-    addRecord,
-    calculateStats,
-    knownDecks,
-    clearAllRecords,
-    storageKey
-  }), [records, addRecord, calculateStats, knownDecks, clearAllRecords, storageKey]);
+  const contextValue = useMemo(
+    () => ({
+      records,
+      addRecord,
+      calculateStats,
+      knownDecks,
+      clearAllRecords,
+      storageKey,
+    }),
+    [
+      records,
+      addRecord,
+      calculateStats,
+      knownDecks,
+      clearAllRecords,
+      storageKey,
+    ],
+  );
 
   return (
-    <DuelContext.Provider value={contextValue}>
-      {children}
-    </DuelContext.Provider>
+    <DuelContext.Provider value={contextValue}>{children}</DuelContext.Provider>
   );
-} 
+}

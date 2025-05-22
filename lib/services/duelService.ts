@@ -1,4 +1,4 @@
-import { DuelRecord, KnownDecks } from '@/lib/types';
+import type { DuelRecord, KnownDecks } from '@/lib/types';
 
 /**
  * メモリ内にデータを保持するデュエル記録サービス（テスト用）
@@ -58,4 +58,4 @@ class DuelService {
 }
 
 // シングルトンインスタンスをエクスポート
-export const duelService = new DuelService(); 
+export const duelService = new DuelService();

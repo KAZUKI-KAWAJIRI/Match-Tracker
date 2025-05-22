@@ -19,8 +19,8 @@ declare module '@/components/ImportButton' {
 }
 
 declare module '@/lib/services/duelService' {
-  import { DuelRecord, KnownDecks } from '@/lib/types';
-  
+  import type { DuelRecord, KnownDecks } from '@/lib/types';
+
   export const duelService: {
     getUserRecords: (userId: string) => Promise<DuelRecord[]>;
     addRecord: (userId: string, record: DuelRecord) => Promise<DuelRecord>;
@@ -29,4 +29,4 @@ declare module '@/lib/services/duelService' {
     getKnownDecks: (userId: string) => Promise<KnownDecks>;
     updateKnownDecks: (userId: string, decks: KnownDecks) => Promise<void>;
   };
-} 
+}

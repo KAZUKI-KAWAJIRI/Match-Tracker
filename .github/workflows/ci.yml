@@ -28,7 +28,7 @@ jobs:
         run: npx tsc --noEmit
         
       - name: Biome lint and format check
-        run: npx @biomejs/biome check --apply ./
+        run: npx @biomejs/biome check --write ./
         
       - name: Build application
         run: npm run build
@@ -39,6 +39,10 @@ jobs:
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env.test
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env.test
           echo "DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> .env.test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         
       - name: Run tests
         run: npm test

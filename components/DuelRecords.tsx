@@ -1,12 +1,19 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { useDuel } from '@/lib/context';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { translate, groupRecordsByDate, sortDateStrings } from '@/lib/utils';
-import { DuelRecord, Stats } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useDuel } from '@/lib/context';
+import type { DuelRecord, Stats } from '@/lib/types';
+import { groupRecordsByDate, sortDateStrings, translate } from '@/lib/utils';
+import React, { useMemo, useState } from 'react';
 
 // 統計情報を表示するコンポーネント
 function StatsCard({ stats }: { stats: Stats }) {
@@ -19,13 +26,23 @@ function StatsCard({ stats }: { stats: Stats }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <h3 className="text-lg font-medium mb-2">コイントス統計</h3>
-            <p>表: {stats.coinStats.heads}回 ({stats.coinStats.headsPercentage}%)</p>
-            <p>裏: {stats.coinStats.tails}回 ({stats.coinStats.tailsPercentage}%)</p>
+            <p>
+              表: {stats.coinStats.heads}回 ({stats.coinStats.headsPercentage}%)
+            </p>
+            <p>
+              裏: {stats.coinStats.tails}回 ({stats.coinStats.tailsPercentage}%)
+            </p>
           </div>
           <div>
             <h3 className="text-lg font-medium mb-2">ターン順統計</h3>
-            <p>先攻: {stats.turnStats.first}回 ({stats.turnStats.firstPercentage}%)</p>
-            <p>後攻: {stats.turnStats.second}回 ({stats.turnStats.secondPercentage}%)</p>
+            <p>
+              先攻: {stats.turnStats.first}回 ({stats.turnStats.firstPercentage}
+              %)
+            </p>
+            <p>
+              後攻: {stats.turnStats.second}回 (
+              {stats.turnStats.secondPercentage}%)
+            </p>
           </div>
           <div>
             <h3 className="text-lg font-medium mb-2">勝率統計</h3>
@@ -40,7 +57,10 @@ function StatsCard({ stats }: { stats: Stats }) {
 }
 
 // 日付ごとの記録リストを表示するコンポーネント
-function DateRecordCard({ dateStr, records }: { dateStr: string; records: ReturnType<typeof useDuel>['records'] }) {
+function DateRecordCard({
+  dateStr,
+  records,
+}: { dateStr: string; records: ReturnType<typeof useDuel>['records'] }) {
   return (
     <Card key={dateStr} className="mb-4">
       <CardHeader className="py-3">
@@ -79,7 +99,9 @@ function EmptyRecordsCard() {
   return (
     <Card>
       <CardContent className="p-6 text-center">
-        <p className="text-muted-foreground">記録がありません。デュエルの結果を入力してください。</p>
+        <p className="text-muted-foreground">
+          記録がありません。デュエルの結果を入力してください。
+        </p>
       </CardContent>
     </Card>
   );
@@ -88,18 +110,21 @@ function EmptyRecordsCard() {
 export function DuelRecords() {
   const { records, calculateStats, clearAllRecords } = useDuel();
   const [filterDate, setFilterDate] = useState<string | null>(null);
-  
+
   const stats = useMemo(() => calculateStats(), [calculateStats]);
 
   // 日付ごとにグループ化された記録
   const recordsByDate = useMemo(() => groupRecordsByDate(records), [records]);
-  
+
   // 日付の配列を新しい順にソート
-  const dates = useMemo(() => sortDateStrings(Object.keys(recordsByDate)), [recordsByDate]);
+  const dates = useMemo(
+    () => sortDateStrings(Object.keys(recordsByDate)),
+    [recordsByDate],
+  );
 
   // 表示する日付をフィルタリング
   const displayDates = filterDate ? [filterDate] : dates;
-  
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -117,14 +142,16 @@ export function DuelRecords() {
       {/* 日付フィルター（記録が複数日ある場合のみ表示） */}
       {dates.length > 1 && (
         <div className="mb-4">
-          <select 
+          <select
             className="px-3 py-2 border rounded"
             value={filterDate || ''}
             onChange={(e) => setFilterDate(e.target.value || null)}
           >
             <option value="">全ての日付</option>
             {dates.map((date: string) => (
-              <option key={date} value={date}>{date}</option>
+              <option key={date} value={date}>
+                {date}
+              </option>
             ))}
           </select>
         </div>
@@ -133,10 +160,10 @@ export function DuelRecords() {
       {/* デュエル記録一覧 */}
       {dates.length > 0 ? (
         displayDates.map((dateStr: string) => (
-          <DateRecordCard 
-            key={dateStr} 
-            dateStr={dateStr} 
-            records={recordsByDate[dateStr]} 
+          <DateRecordCard
+            key={dateStr}
+            dateStr={dateStr}
+            records={recordsByDate[dateStr]}
           />
         ))
       ) : (
@@ -144,4 +171,4 @@ export function DuelRecords() {
       )}
     </div>
   );
-} 
+}

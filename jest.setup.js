@@ -24,7 +24,7 @@ jest.mock('next/router', () => ({
     },
     isFallback: false,
   }),
-}))
+}));
 
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
@@ -40,44 +40,44 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => ({
     get: () => null,
   }),
-}))
+}));
 
 // モックのローカルストレージを実装
 class LocalStorageMock {
   constructor() {
-    this.store = {}
+    this.store = {};
   }
 
   clear() {
-    this.store = {}
+    this.store = {};
   }
 
   getItem(key) {
-    return this.store[key] || null
+    return this.store[key] || null;
   }
 
   setItem(key, value) {
-    this.store[key] = String(value)
+    this.store[key] = String(value);
   }
 
   removeItem(key) {
-    delete this.store[key]
+    delete this.store[key];
   }
 }
 
 // グローバルオブジェクトにモックのローカルストレージを追加
-global.localStorage = new LocalStorageMock()
-global.sessionStorage = new LocalStorageMock()
+global.localStorage = new LocalStorageMock();
+global.sessionStorage = new LocalStorageMock();
 
 // フェッチをモック化
-global.fetch = jest.fn()
+global.fetch = jest.fn();
 
 // ブラウザ環境のモックは条件付きで追加
 if (typeof window !== 'undefined') {
   // matchMediaのモック
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
+    value: jest.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -87,10 +87,10 @@ if (typeof window !== 'undefined') {
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
     })),
-  })
+  });
 } else {
   // Nodeの場合はグローバルオブジェクトにwindowを追加
-  global.window = {}
+  global.window = {};
 }
 
 // ResizeObserverのモック
@@ -98,4 +98,4 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-})) 
+}));

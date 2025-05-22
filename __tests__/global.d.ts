@@ -19,15 +19,19 @@ declare global {
       mockName: (name: string) => Mock<T, Y>;
     }
   }
-  
+
   function describe(name: string, fn: () => void): void;
-  function test(name: string, fn: (done?: jest.DoneCallback) => void | Promise<any>, timeout?: number): void;
+  function test(
+    name: string,
+    fn: (done?: jest.DoneCallback) => void | Promise<any>,
+    timeout?: number,
+  ): void;
   function expect<T>(actual: T): jest.Matchers<T>;
   function beforeEach(fn: () => void | Promise<any>, timeout?: number): void;
   function afterEach(fn: () => void | Promise<any>, timeout?: number): void;
   function beforeAll(fn: () => void | Promise<any>, timeout?: number): void;
   function afterAll(fn: () => void | Promise<any>, timeout?: number): void;
-  
+
   // jestオブジェクトをグローバルに定義
   const jest: {
     fn: <T = any, Y extends any[] = any>() => jest.Mock<T, Y>;
@@ -35,9 +39,12 @@ declare global {
     clearAllMocks: () => void;
     resetAllMocks: () => void;
     restoreAllMocks: () => void;
-    spyOn: <T extends {}, M extends keyof T>(object: T, method: M) => jest.SpyInstance<T[M], T extends any[] ? T : any[]>;
+    spyOn: <T extends {}, M extends keyof T>(
+      object: T,
+      method: M,
+    ) => jest.SpyInstance<T[M], T extends any[] ? T : any[]>;
   };
-  
+
   // テスト用のエイリアス
   const it: typeof test;
-} 
+}

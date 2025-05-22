@@ -1,10 +1,10 @@
-const nextJest = require('next/jest')
+const nextJest = require('next/jest');
 
 // Next.jsのJest設定を使用
 const createJestConfig = nextJest({
   // テスト環境のNext.jsアプリケーションへのパスを指定
   dir: './',
-})
+});
 
 // Jestへ渡すカスタム設定
 const customJestConfig = {
@@ -16,7 +16,7 @@ const customJestConfig = {
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
-    '<rootDir>/app/generated/'
+    '<rootDir>/app/generated/',
   ],
   // モジュールのモック設定
   moduleNameMapper: {
@@ -24,7 +24,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/$1',
     // CSSや画像など、非JavaScriptファイルのモック
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__mocks__/fileMock.js'
+    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
   // テスト環境
   testEnvironment: 'node',
@@ -37,11 +37,11 @@ const customJestConfig = {
     '!**/*.d.ts',
     '!**/node_modules/**',
     '!**/.next/**',
-    '!**/app/generated/**'
+    '!**/app/generated/**',
   ],
   // カバレッジレポートの出力先
   coverageDirectory: 'coverage',
-}
+};
 
 // createJestConfigを使用して、Next.jsの設定とカスタム設定をマージした設定を作成
-module.exports = createJestConfig(customJestConfig) 
+module.exports = createJestConfig(customJestConfig);

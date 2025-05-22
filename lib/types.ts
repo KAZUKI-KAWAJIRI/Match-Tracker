@@ -6,16 +6,16 @@ export type MatchResult = 'win' | 'lose' | null;
 export const TRANSLATIONS = {
   coin: {
     heads: '表',
-    tails: '裏'
+    tails: '裏',
   },
   turn: {
     first: '先攻',
-    second: '後攻'
+    second: '後攻',
   },
   result: {
     win: '勝利',
-    lose: '敗北'
-  }
+    lose: '敗北',
+  },
 } as const;
 
 export interface DuelRecord {
@@ -52,4 +52,4 @@ export interface Stats {
     losses: number;
     winPercentage: number;
   };
-} 
+}

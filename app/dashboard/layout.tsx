@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { AuthGuard } from '@/components/auth/AuthGuard'
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return <AuthGuard>{children}</AuthGuard>
-} 
+  return <AuthGuard>{children}</AuthGuard>;
+}

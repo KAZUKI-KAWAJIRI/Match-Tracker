@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export function createClient() {
-  return createClientComponentClient()
-} 
+  return createClientComponentClient();
+}
